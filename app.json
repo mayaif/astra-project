@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "astra-project",
-    "slug": "astra-project",
+    "name": "Astra",
+    "slug": "astra",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "astra",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
