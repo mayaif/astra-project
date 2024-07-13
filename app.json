@@ -4,7 +4,7 @@
     "slug": "astra",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "astra",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "package": "com.mi.astra"
     },
     "android": {
       "adaptiveIcon": {
