@@ -9,6 +9,7 @@ import {
   ImageBackground,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { Video, Audio, ResizeMode } from "expo-av";
 import React, { useState } from "react";
 import { icons } from "@/constants";
 
@@ -30,15 +31,31 @@ const zoomOut = {
 };
 const TrendingItem = ({ activeItem, item }) => {
   const [play, setPlay] = useState(false);
+  const video = React.useRef(null);
 
+  // console.log(item.video);
   return (
     <Animatable.View
-      className="mr-5"
+      className="mr-4"
       animation={activeItem === item.$id ? zoomIn : zoomOut}
       duration={500}
     >
       {play ? (
-        <Text className="text-white">Playing</Text>
+        <Video
+          ref={video}
+          source={{
+            uri: item.video,
+          }}
+          className="w-52 h-72 rounded-[20px] mt-3 bg-white/10"
+          resizeMode={ResizeMode.CONTAIN}
+          useNativeControls
+          shouldPlay
+          onPlaybackStatusUpdate={(status) => {
+            if (status.didJustFinish) {
+              setPlay(false);
+            }
+          }}
+        />
       ) : (
         <TouchableOpacity
           className="relative items-center justify-center"
@@ -47,7 +64,7 @@ const TrendingItem = ({ activeItem, item }) => {
         >
           <ImageBackground
             source={{ uri: item.thumbnail }}
-            className="w-52 h-72 rounded-[35px] my-5 overflow-hidden shadow-lg shadow-black/40"
+            className="w-52 h-72 rounded-[20px] my-5 overflow-hidden shadow-lg shadow-black/40"
             resizeMode="cover"
           />
           <Image
@@ -77,7 +94,7 @@ const Trending = ({ posts }) => {
       )}
       onViewableItemsChanged={viewableItemsChanged}
       viewabilityConfig={{ itemVisiblePercentThreshold: 70 }}
-      contentOffset={{ x: 170 }}
+      contentOffset={{ x: 150 }}
       horizontal
     />
   );
