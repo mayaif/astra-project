@@ -11,12 +11,19 @@ import useAppwrite from "@/lib/useAppwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { icons } from "@/constants";
 import InfoBox from "@/components/InfoBox";
+import { signOut } from "../../lib/appwrite";
+import { router } from "expo-router";
 
 const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
   const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
 
-  const logout = () => {};
+  const logout = async () => {
+    await signOut();
+    setUser(null);
+    setIsLoggedIn(false);
+    router.replace("/sign-in");
+  };
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
@@ -42,7 +49,24 @@ const Profile = () => {
                 resizeMode="cover"
               />
             </View>
-            <InfoBox />
+            <InfoBox
+              title={user?.username}
+              containerStyles="mt-5"
+              titleStyles="text-lg"
+            />
+            <View className="mt-5 flex-row">
+              <InfoBox
+                title={posts.length || 0}
+                subtitle="Posts"
+                containerStyles="mr-10"
+                titleStyles="text-xl"
+              />
+              <InfoBox
+                title="1.2k"
+                subtitle="Followers"
+                titleStyles="text-xl"
+              />
+            </View>
           </View>
         )}
         ListEmptyComponent={() => (
