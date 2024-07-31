@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "@/components/EmptyState";
 import VideoCard from "@/components/VideoCard";
-import { getUserPosts } from "@/lib/appwrite";
+import { getUserPosts, getUserFollowersCount } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { icons } from "@/constants";
@@ -16,8 +16,21 @@ import { router } from "expo-router";
 
 const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
+  const [followersCount, setFollowersCount] = useState(0);
   const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
 
+  useEffect(() => {
+    const fetchFollowersCount = async () => {
+      try {
+        const count = await getUserFollowersCount(user.$id);
+        setFollowersCount(count);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchFollowersCount();
+  }, [user.$id]);
   const logout = async () => {
     await signOut();
     setUser(null);
@@ -62,7 +75,7 @@ const Profile = () => {
                 titleStyles="text-xl"
               />
               <InfoBox
-                title="1.2k"
+                title={followersCount}
                 subtitle="Followers"
                 titleStyles="text-xl"
               />
