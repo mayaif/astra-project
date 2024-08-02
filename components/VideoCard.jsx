@@ -1,42 +1,66 @@
 /** @format */
 
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
 import { Video, ResizeMode } from "expo-av";
 import { icons } from "@/constants";
-import { addFollower } from "@/lib/appwrite";
+import {
+  addFollower,
+  isAlreadyFollowing,
+  removeFollower,
+} from "@/lib/appwrite";
 import {
   Menu,
   MenuOptions,
   MenuOption,
   MenuTrigger,
-  MenuProvider,
 } from "react-native-popup-menu";
 import { useGlobalContext } from "@/context/GlobalProvider";
+
 const VideoCard = ({
   video: {
     title,
     thumbnail,
     video,
-    creator: { username, avatar, $id },
+    creator: { username, avatar, $id: creatorId },
   },
 }) => {
   const { user } = useGlobalContext();
   const [play, setPlay] = useState(false);
-  // console.log("Creator userId:", $id);
+  const [isFollowing, setIsFollowing] = useState(false);
 
-  const handleFollow = async (followedUserId) => {
-    console.log("Followed userId in handleFollow:", followedUserId);
+  useEffect(() => {
+    const checkFollowStatus = async () => {
+      if (user && user.$id !== creatorId) {
+        const alreadyFollowing = await isAlreadyFollowing(user.$id, creatorId);
+        setIsFollowing(alreadyFollowing);
+      }
+    };
+
+    checkFollowStatus();
+  }, [user, creatorId]);
+
+  const handleFollowToggle = async () => {
     try {
-      if (user && user.$id !== followedUserId) {
+      if (!user || user.$id === creatorId) return;
+
+      if (isFollowing) {
+        const success = await removeFollower(user.$id, creatorId);
+        if (success) {
+          setIsFollowing(false);
+          Alert.alert(`Unfollowed ${username}`);
+        }
+      } else {
         const newFollowerData = {
           followerUserId: user.$id,
-          followedUserId: followedUserId,
+          followedUserId: creatorId,
         };
-        const newFollower = await addFollower(newFollowerData);
+        await addFollower(newFollowerData);
+        setIsFollowing(true);
+        Alert.alert(`You are now following ${username}`);
       }
     } catch (error) {
-      console.error("Error creating follower:", error);
+      console.error("Error toggling follow state:", error);
     }
   };
 
@@ -53,33 +77,38 @@ const VideoCard = ({
           </View>
           <View className="justify-center flex-1 ml-3 gap-y-1">
             <Text
-              className="text-white font-psemibold text-sm"
+              className="text-white font-semibold text-sm"
               numberOfLines={1}
             >
               {title}
             </Text>
             <Text
-              className="text-gray-100 text-xs font-pregular"
+              className="text-gray-100 text-xs font-regular"
               numberOfLines={1}
             >
               {username}
             </Text>
           </View>
         </View>
-        <View className="pt-2">
-          <Menu>
-            <MenuTrigger>
-              <Image
-                source={icons.menu}
-                className="w-5 h-5"
-                resizeMode="contain"
-              />
-            </MenuTrigger>
-            <MenuOptions>
-              <MenuOption onSelect={() => handleFollow($id)} text="Follow" />
-            </MenuOptions>
-          </Menu>
-        </View>
+        {user && user.$id !== creatorId && (
+          <View className="pt-2">
+            <Menu>
+              <MenuTrigger>
+                <Image
+                  source={icons.menu}
+                  className="w-5 h-5"
+                  resizeMode="contain"
+                />
+              </MenuTrigger>
+              <MenuOptions>
+                <MenuOption
+                  onSelect={handleFollowToggle}
+                  text={isFollowing ? "Unfollow" : "Follow"}
+                />
+              </MenuOptions>
+            </Menu>
+          </View>
+        )}
       </View>
       {play ? (
         <Video
