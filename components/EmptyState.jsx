@@ -14,11 +14,13 @@ const EmptyState = ({ title, subtitle }) => {
         className="h-[270px] [w-215px]"
         resizeMode="contain"
       />
-
-      <Text className="font-pmedium text-base text-gray-100">{subtitle}</Text>
-      <Text className="text-xl tex-center font-psemibold text-white">
+      <Text className="text-xl text-center font-psemibold text-white pb-2">
         {title}
       </Text>
+      <Text className="font-pmedium text-center text-gray-100 text-base px-4">
+        {subtitle}
+      </Text>
+
       <CustomButtom
         title="Create video"
         handlePress={() => router.push("/create")}
