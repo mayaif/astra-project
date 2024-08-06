@@ -4,10 +4,19 @@ import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Video, ResizeMode } from "expo-av";
 import { icons } from "@/constants";
+import AntDesign from "@expo/vector-icons/AntDesign";
+
 import {
   addFollower,
   isAlreadyFollowing,
   removeFollower,
+  addLike,
+  removeLikes,
+  isAlreadyLiked,
+  getLikesCount,
+  addSavedVideo,
+  removeSavedVideo,
+  isVideoSaved,
 } from "@/lib/appwrite";
 import {
   Menu,
@@ -22,23 +31,36 @@ const VideoCard = ({
     title,
     thumbnail,
     video,
+    $id: videoId,
     creator: { username, avatar, $id: creatorId },
   },
 }) => {
-  const { user } = useGlobalContext();
+  const { user, refreshSavedVideos } = useGlobalContext(); // Include refreshSavedVideos to update context
   const [play, setPlay] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    const checkFollowStatus = async () => {
+    const initializeData = async () => {
       if (user && user.$id !== creatorId) {
         const alreadyFollowing = await isAlreadyFollowing(user.$id, creatorId);
         setIsFollowing(alreadyFollowing);
+
+        const alreadyLiked = await isAlreadyLiked(videoId, user.$id);
+        setIsLiked(alreadyLiked);
+
+        const alreadySaved = await isVideoSaved(videoId, user.$id); // Check if video is saved
+        setIsSaved(alreadySaved);
       }
+
+      const count = await getLikesCount(videoId);
+      setLikesCount(count);
     };
 
-    checkFollowStatus();
-  }, [user, creatorId]);
+    initializeData();
+  }, [user, creatorId, videoId]);
 
   const handleFollowToggle = async () => {
     try {
@@ -61,6 +83,47 @@ const VideoCard = ({
       }
     } catch (error) {
       console.error("Error toggling follow state:", error);
+    }
+  };
+
+  const handleSaveToggle = async () => {
+    try {
+      if (!user || user.$id === creatorId) return;
+
+      if (isSaved) {
+        const success = await removeSavedVideo(videoId, user.$id);
+        if (success) {
+          setIsSaved(false);
+          Alert.alert("Video unsaved");
+        }
+      } else {
+        await addSavedVideo(videoId, user.$id);
+        setIsSaved(true);
+        Alert.alert("Video saved");
+      }
+      refreshSavedVideos(); // Refresh the saved videos in the global context
+    } catch (error) {
+      console.error("Error toggling save state:", error);
+    }
+  };
+
+  const handleLikeToggle = async () => {
+    try {
+      if (!user || user.$id === creatorId) return;
+
+      if (isLiked) {
+        const success = await removeLikes(videoId, user.$id);
+        if (success) {
+          setIsLiked(false);
+          setLikesCount(likesCount - 1);
+        }
+      } else {
+        await addLike(videoId, user.$id);
+        setIsLiked(true);
+        setLikesCount(likesCount + 1);
+      }
+    } catch (error) {
+      console.error("Error toggling like state:", error);
     }
   };
 
@@ -102,8 +165,8 @@ const VideoCard = ({
               </MenuTrigger>
               <MenuOptions>
                 <MenuOption
-                  onSelect={handleFollowToggle}
-                  text={isFollowing ? "Unfollow" : "Follow"}
+                  onSelect={handleSaveToggle}
+                  text={isSaved ? "Unsave" : "Save"}
                 />
               </MenuOptions>
             </Menu>
@@ -143,6 +206,29 @@ const VideoCard = ({
           />
         </TouchableOpacity>
       )}
+      <View className="flex flex-row items-center justify-center mt-4 gap-x-4">
+        {user && user.$id !== creatorId && (
+          <View className="">
+            <TouchableOpacity onPress={handleFollowToggle} activeOpacity={0.6}>
+              <View className="px-3 py-1 rounded-sm bg-gray-50">
+                <Text className="font-pregular text-sm">
+                  {isFollowing ? "Unfollow" : "Follow"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+        <View className="flex- flex-row items-center justify-center gap-2">
+          <TouchableOpacity onPress={handleLikeToggle} activeOpacity={0.7}>
+            <AntDesign
+              name={isLiked ? "like1" : "like2"}
+              size={24}
+              color="white"
+            />
+          </TouchableOpacity>
+          <Text className="text-white font-pregular pt-1">{likesCount}</Text>
+        </View>
+      </View>
     </View>
   );
 };
