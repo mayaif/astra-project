@@ -7,6 +7,7 @@ import { icons } from "@/constants";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import {
   addLike,
@@ -16,6 +17,7 @@ import {
   addSavedVideo,
   removeSavedVideo,
   isVideoSaved,
+  deleteUserPost,
 } from "@/lib/appwrite";
 import {
   Menu,
@@ -40,6 +42,7 @@ const VideoCard = ({
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   useEffect(() => {
     const initializeData = async () => {
@@ -56,6 +59,7 @@ const VideoCard = ({
 
     initializeData();
   }, [user, creatorId, videoId]);
+
   const handleFollowToggle = () => {
     toggleFollowUser(creatorId);
     const action = followedUsers.has(creatorId)
@@ -85,6 +89,43 @@ const VideoCard = ({
     }
   };
 
+  const handleDeleteVideos = async () => {
+    try {
+      if (!user || user.$id !== creatorId) return;
+
+      const success = await deleteUserPost(videoId);
+      if (success) {
+        setIsDeleted(true);
+        Alert.alert("Video deleted");
+      } else {
+        Alert.alert("Failed to delete the video");
+      }
+    } catch (error) {
+      console.error("Error deleting video:", error);
+      Alert.alert("An error occurred while deleting the video");
+    }
+  };
+
+  const confirmDelete = () => {
+    Alert.alert(
+      "Delete Video",
+      "Are you sure you want to delete this video?",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("Delete Cancelled"),
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: handleDeleteVideos,
+          style: "destructive",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const handleLikeToggle = async () => {
     try {
       if (!user || user.$id === creatorId) return;
@@ -106,107 +147,139 @@ const VideoCard = ({
   };
 
   return (
-    <View className="flex-col items-center px-4 mb-14">
-      <View className="flex-row gap-3 items-start">
-        <View className="justify-center items-center flex-row flex-1">
-          <View className="w-[46px] h-[46px] rounded-full justify-center items-center">
+    !isDeleted && (
+      <View className="flex-col items-center px-4 mb-14">
+        <View className="flex-row gap-3 items-start">
+          <View className="justify-center items-center flex-row flex-1">
+            <View className="w-[46px] h-[46px] rounded-full justify-center items-center">
+              <Image
+                source={{ uri: avatar }}
+                className="w-full h-full rounded-full"
+                resizeMode="cover"
+              />
+            </View>
+            <View className="justify-center flex-1 ml-3 gap-y-1">
+              <Text
+                className="text-white font-semibold text-sm"
+                numberOfLines={1}
+              >
+                {title}
+              </Text>
+              <Text
+                className="text-gray-100 text-xs font-regular"
+                numberOfLines={1}
+              >
+                {username}
+              </Text>
+            </View>
+          </View>
+          {user && user.$id === creatorId && (
+            <View className="pt-2">
+              <Menu>
+                <MenuTrigger>
+                  <Image
+                    source={icons.menu}
+                    className="w-5 h-5"
+                    resizeMode="contain"
+                  />
+                </MenuTrigger>
+                <MenuOptions>
+                  <MenuOption
+                    onSelect={confirmDelete}
+                    className="flex flex-row items-center gap-1 px-3 py-4"
+                  >
+                    <MaterialIcons name="delete" size={24} color="black" />
+                    <Text className="text-base">Delete</Text>
+                  </MenuOption>
+                </MenuOptions>
+              </Menu>
+            </View>
+          )}
+        </View>
+        {play ? (
+          <Video
+            source={{
+              uri: video,
+            }}
+            className="w-full h-60 rounded-xl mt-3"
+            resizeMode={ResizeMode.CONTAIN}
+            useNativeControls
+            shouldPlay
+            onPlaybackStatusUpdate={(status) => {
+              if (status.didJustFinish) {
+                setPlay(false);
+              }
+            }}
+          />
+        ) : (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => setPlay(true)}
+            className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
+          >
             <Image
-              source={{ uri: avatar }}
-              className="w-full h-full rounded-full"
+              source={{ uri: thumbnail }}
+              className="w-full h-full rounded-xl mt-3"
               resizeMode="cover"
             />
-          </View>
-          <View className="justify-center flex-1 ml-3 gap-y-1">
-            <Text
-              className="text-white font-semibold text-sm"
-              numberOfLines={1}
-            >
-              {title}
-            </Text>
-            <Text
-              className="text-gray-100 text-xs font-regular"
-              numberOfLines={1}
-            >
-              {username}
-            </Text>
-          </View>
-        </View>
-      </View>
-      {play ? (
-        <Video
-          source={{
-            uri: video,
-          }}
-          className="w-full h-60 rounded-xl mt-3"
-          resizeMode={ResizeMode.CONTAIN}
-          useNativeControls
-          shouldPlay
-          onPlaybackStatusUpdate={(status) => {
-            if (status.didJustFinish) {
-              setPlay(false);
-            }
-          }}
-        />
-      ) : (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => setPlay(true)}
-          className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
-        >
-          <Image
-            source={{ uri: thumbnail }}
-            className="w-full h-full rounded-xl mt-3"
-            resizeMode="cover"
-          />
-          <Image
-            source={icons.play}
-            className="w-12 h-12 absolute"
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      )}
-      <View className="flex flex-row items-center justify-center mt-4 gap-x-4">
-        {user && user.$id !== creatorId && (
-          <View className="flex flex-row items-center justify-center gap-x-4">
-            <TouchableOpacity onPress={handleFollowToggle} activeOpacity={0.7}>
-              <SimpleLineIcons
-                name={
-                  followedUsers.has(creatorId)
-                    ? "user-following"
-                    : "user-follow"
-                }
-                size={22}
-                color="white"
-              />
-            </TouchableOpacity>
-
-            <View className="flex- flex-row items-center justify-center gap-2">
-              <TouchableOpacity onPress={handleSaveToggle} activeOpacity={0.7}>
-                <MaterialCommunityIcons
+            <Image
+              source={icons.play}
+              className="w-12 h-12 absolute"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
+        <View className="flex flex-row items-center justify-center mt-4 gap-x-4">
+          {user && user.$id !== creatorId && (
+            <View className="flex flex-row items-center justify-center gap-x-4">
+              <TouchableOpacity
+                onPress={handleFollowToggle}
+                activeOpacity={0.7}
+              >
+                <SimpleLineIcons
                   name={
-                    isSaved ? "content-save-move" : "content-save-move-outline"
+                    followedUsers.has(creatorId)
+                      ? "user-following"
+                      : "user-follow"
                   }
-                  size={28}
+                  size={22}
                   color="white"
                 />
               </TouchableOpacity>
+
+              <View className="flex flex-row items-center justify-center gap-2">
+                <TouchableOpacity
+                  onPress={handleSaveToggle}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons
+                    name={
+                      isSaved
+                        ? "content-save-move"
+                        : "content-save-move-outline"
+                    }
+                    size={28}
+                    color="white"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
+          )}
+          <View className="flex- flex-row items-center justify-center gap-2">
+            <TouchableOpacity onPress={handleLikeToggle} activeOpacity={0.7}>
+              <AntDesign
+                name={isLiked ? "like1" : "like2"}
+                size={24}
+                color="white"
+              />
+            </TouchableOpacity>
+            <Text className="text-white text-base font-pregular pt-1">
+              {likesCount}
+            </Text>
           </View>
-        )}
-        <View className="flex- flex-row items-center justify-center gap-2">
-          <TouchableOpacity onPress={handleLikeToggle} activeOpacity={0.7}>
-            <AntDesign
-              name={isLiked ? "like1" : "like2"}
-              size={24}
-              color="white"
-            />
-          </TouchableOpacity>
-          <Text className="text-white text-base font-pregular pt-1">
-            {likesCount}
-          </Text>
         </View>
       </View>
-    </View>
+    )
   );
 };
 
