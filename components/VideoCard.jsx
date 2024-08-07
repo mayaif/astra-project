@@ -5,6 +5,8 @@ import React, { useState, useEffect } from "react";
 import { Video, ResizeMode } from "expo-av";
 import { icons } from "@/constants";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 
 import {
   addFollower,
@@ -153,7 +155,7 @@ const VideoCard = ({
             </Text>
           </View>
         </View>
-        {user && user.$id !== creatorId && (
+        {/* {user && user.$id !== creatorId && (
           <View className="pt-2">
             <Menu>
               <MenuTrigger>
@@ -171,7 +173,7 @@ const VideoCard = ({
               </MenuOptions>
             </Menu>
           </View>
-        )}
+        )} */}
       </View>
       {play ? (
         <Video
@@ -208,14 +210,26 @@ const VideoCard = ({
       )}
       <View className="flex flex-row items-center justify-center mt-4 gap-x-4">
         {user && user.$id !== creatorId && (
-          <View className="">
-            <TouchableOpacity onPress={handleFollowToggle} activeOpacity={0.6}>
-              <View className="px-3 py-1 rounded-sm bg-gray-50">
-                <Text className="font-pregular text-sm">
-                  {isFollowing ? "Unfollow" : "Follow"}
-                </Text>
-              </View>
+          <View className="flex flex-row items-center justify-center gap-x-4">
+            <TouchableOpacity onPress={handleFollowToggle} activeOpacity={0.7}>
+              <SimpleLineIcons
+                name={isFollowing ? "user-following" : "user-follow"}
+                size={24}
+                color="white"
+              />
             </TouchableOpacity>
+
+            <View className="flex- flex-row items-center justify-center gap-2">
+              <TouchableOpacity onPress={handleSaveToggle} activeOpacity={0.7}>
+                <MaterialCommunityIcons
+                  name={
+                    isSaved ? "content-save-move" : "content-save-move-outline"
+                  }
+                  size={28}
+                  color="white"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
         <View className="flex- flex-row items-center justify-center gap-2">
