@@ -9,9 +9,6 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 
 import {
-  addFollower,
-  isAlreadyFollowing,
-  removeFollower,
   addLike,
   removeLikes,
   isAlreadyLiked,
@@ -37,9 +34,9 @@ const VideoCard = ({
     creator: { username, avatar, $id: creatorId },
   },
 }) => {
-  const { user, refreshSavedVideos } = useGlobalContext(); // Include refreshSavedVideos to update context
+  const { user, refreshSavedVideos, followedUsers, toggleFollowUser } =
+    useGlobalContext();
   const [play, setPlay] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
@@ -47,13 +44,9 @@ const VideoCard = ({
   useEffect(() => {
     const initializeData = async () => {
       if (user && user.$id !== creatorId) {
-        const alreadyFollowing = await isAlreadyFollowing(user.$id, creatorId);
-        setIsFollowing(alreadyFollowing);
-
         const alreadyLiked = await isAlreadyLiked(videoId, user.$id);
         setIsLiked(alreadyLiked);
-
-        const alreadySaved = await isVideoSaved(videoId, user.$id); // Check if video is saved
+        const alreadySaved = await isVideoSaved(videoId, user.$id);
         setIsSaved(alreadySaved);
       }
 
@@ -63,29 +56,12 @@ const VideoCard = ({
 
     initializeData();
   }, [user, creatorId, videoId]);
-
-  const handleFollowToggle = async () => {
-    try {
-      if (!user || user.$id === creatorId) return;
-
-      if (isFollowing) {
-        const success = await removeFollower(user.$id, creatorId);
-        if (success) {
-          setIsFollowing(false);
-          Alert.alert(`Unfollowed ${username}`);
-        }
-      } else {
-        const newFollowerData = {
-          followerUserId: user.$id,
-          followedUserId: creatorId,
-        };
-        await addFollower(newFollowerData);
-        setIsFollowing(true);
-        Alert.alert(`You are now following ${username}`);
-      }
-    } catch (error) {
-      console.error("Error toggling follow state:", error);
-    }
+  const handleFollowToggle = () => {
+    toggleFollowUser(creatorId);
+    const action = followedUsers.has(creatorId)
+      ? "Unfollowed"
+      : "You are now following";
+    Alert.alert(`${action} ${username}`);
   };
 
   const handleSaveToggle = async () => {
@@ -101,9 +77,9 @@ const VideoCard = ({
       } else {
         await addSavedVideo(videoId, user.$id);
         setIsSaved(true);
-        Alert.alert("Video saved");
+        Alert.alert("Video saved to Bookmarks");
       }
-      refreshSavedVideos(); // Refresh the saved videos in the global context
+      refreshSavedVideos();
     } catch (error) {
       console.error("Error toggling save state:", error);
     }
@@ -155,25 +131,6 @@ const VideoCard = ({
             </Text>
           </View>
         </View>
-        {/* {user && user.$id !== creatorId && (
-          <View className="pt-2">
-            <Menu>
-              <MenuTrigger>
-                <Image
-                  source={icons.menu}
-                  className="w-5 h-5"
-                  resizeMode="contain"
-                />
-              </MenuTrigger>
-              <MenuOptions>
-                <MenuOption
-                  onSelect={handleSaveToggle}
-                  text={isSaved ? "Unsave" : "Save"}
-                />
-              </MenuOptions>
-            </Menu>
-          </View>
-        )} */}
       </View>
       {play ? (
         <Video
@@ -213,8 +170,12 @@ const VideoCard = ({
           <View className="flex flex-row items-center justify-center gap-x-4">
             <TouchableOpacity onPress={handleFollowToggle} activeOpacity={0.7}>
               <SimpleLineIcons
-                name={isFollowing ? "user-following" : "user-follow"}
-                size={24}
+                name={
+                  followedUsers.has(creatorId)
+                    ? "user-following"
+                    : "user-follow"
+                }
+                size={22}
                 color="white"
               />
             </TouchableOpacity>
@@ -240,7 +201,9 @@ const VideoCard = ({
               color="white"
             />
           </TouchableOpacity>
-          <Text className="text-white font-pregular pt-1">{likesCount}</Text>
+          <Text className="text-white text-base font-pregular pt-1">
+            {likesCount}
+          </Text>
         </View>
       </View>
     </View>

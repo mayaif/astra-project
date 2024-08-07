@@ -6,6 +6,9 @@ import {
   getSavedVideos,
   addSavedVideo,
   removeSavedVideo,
+  getFollowedUsers,
+  addFollower,
+  removeFollower,
 } from "../lib/appwrite";
 
 const GlobalContext = createContext();
@@ -16,6 +19,7 @@ const GlobalProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [savedVideos, setSavedVideos] = useState([]);
+  const [followedUsers, setFollowedUsers] = useState(new Set());
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -25,10 +29,12 @@ const GlobalProvider = ({ children }) => {
           setIsLoggedIn(true);
           setUser(currentUser);
           await fetchSavedVideos(currentUser.$id);
+          await updateFollowedUsers(currentUser.$id);
         } else {
           setIsLoggedIn(false);
           setUser(null);
           setSavedVideos([]);
+          setFollowedUsers(new Set());
         }
       } catch (error) {
         console.log(error);
@@ -36,7 +42,6 @@ const GlobalProvider = ({ children }) => {
         setIsLoading(false);
       }
     };
-
     fetchUserData();
   }, []);
 
@@ -69,6 +74,41 @@ const GlobalProvider = ({ children }) => {
       console.error("Error unsaving video:", error);
     }
   };
+  const updateFollowedUsers = async (userId) => {
+    if (!userId) return;
+    try {
+      const followedSet = await getFollowedUsers(userId);
+      setFollowedUsers(followedSet);
+    } catch (error) {
+      console.error("Error updating followed users:", error);
+    }
+  };
+  const toggleFollowUser = async (creatorId) => {
+    if (!user || user.$id === creatorId) return;
+
+    try {
+      const isFollowing = followedUsers.has(creatorId);
+      if (isFollowing) {
+        const success = await removeFollower(user.$id, creatorId);
+        if (success) {
+          setFollowedUsers((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(creatorId);
+            return newSet;
+          });
+        }
+      } else {
+        const newFollowerData = {
+          followerUserId: user.$id,
+          followedUserId: creatorId,
+        };
+        await addFollower(newFollowerData);
+        setFollowedUsers((prev) => new Set(prev).add(creatorId));
+      }
+    } catch (error) {
+      console.error("Error toggling follow state:", error);
+    }
+  };
 
   return (
     <GlobalContext.Provider
@@ -82,6 +122,8 @@ const GlobalProvider = ({ children }) => {
         saveVideo,
         unsaveVideo,
         refreshSavedVideos: () => fetchSavedVideos(user ? user.$id : null),
+        followedUsers,
+        toggleFollowUser,
       }}
     >
       {children}
