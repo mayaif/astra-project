@@ -1,6 +1,13 @@
 /** @format */
 
-import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,14 +20,16 @@ import { icons } from "@/constants";
 import InfoBox from "@/components/InfoBox";
 import { signOut } from "../../lib/appwrite";
 import { router } from "expo-router";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
   const [followersCount, setFollowersCount] = useState(0);
-  const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
+  const { data: posts } = useAppwrite(() => getUserPosts(user?.$id));
 
   useEffect(() => {
     const fetchFollowersCount = async () => {
+      if (!user) return;
       try {
         const count = await getUserFollowersCount(user.$id);
         setFollowersCount(count);
@@ -30,13 +39,38 @@ const Profile = () => {
     };
 
     fetchFollowersCount();
-  }, [user.$id]);
+  }, [user]);
+
   const logout = async () => {
     await signOut();
     setUser(null);
     setIsLoggedIn(false);
     router.replace("/sign-in");
   };
+  const confirmLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("Logout Cancelled"),
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: logout,
+          style: "destructive",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
@@ -44,15 +78,15 @@ const Profile = () => {
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
-          <View className="w-full justify-center items-center mt-6  px-4">
+          <View className="w-full justify-center items-center mb-10  px-4">
             <TouchableOpacity
-              className="w-full items-end mb-10"
-              onPress={logout}
+              className="w-full items-end my-8"
+              onPress={confirmLogout}
             >
-              <Image
-                source={icons.logout}
-                resizeMode="contain"
-                className="w-6 h-6"
+              <MaterialCommunityIcons
+                name="logout-variant"
+                size={30}
+                color="#FF9C01"
               />
             </TouchableOpacity>
             <View className="w-16 h-16  rounded-lg justify-center items-center">
