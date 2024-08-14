@@ -17,7 +17,7 @@ export default function App() {
         <View className="w-full items-center justify-center min-h-[85vh] px-4">
           <Image
             source={images.logo}
-            className="w-[130px] h-[84px]"
+            className="w-[170px] h-[94px]"
             resizeMode="contain"
           />
           <Image
@@ -28,11 +28,11 @@ export default function App() {
           <View className="relative mt-5">
             <Text className="text-3xl text-white font-bold text-center">
               Share your vision with {""}
-              <Text className="text-secondary-200">Astra</Text>
+              <Text className="text-secondary-50">Astra</Text>
             </Text>
             {/* <Image
               source={images.path}
-              className="w-[140px] h-[15px] absolute left-[25%] top-16"
+              className="w-[140px] h-[15px] absolute left-[29%] top-16"
               resizeMode="contain"
             /> */}
             <Text className="text-gray-100 text-sm text-center font-pregular mt-7">

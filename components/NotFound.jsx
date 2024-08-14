@@ -11,13 +11,13 @@ const EmptyState = ({ title, subtitle }) => {
     <View className="flex justtify-center items-center px-4">
       <Image
         source={images.empty}
-        className="h-[270px] [w-215px]"
+        className="h-[250px] [w-195px]"
         resizeMode="contain"
       />
-      <Text className="text-xl text-center font-psemibold text-white pb-2">
+      <Text className="text-xl text-center font-psemibold text-white pb-2 pt-10">
         {title}
       </Text>
-      <Text className="font-pmedium text-center text-gray-100 text-base px-4">
+      <Text className="font-pmedium text-center text-gray-100 text-base px-4 pb-4">
         {subtitle}
       </Text>
 

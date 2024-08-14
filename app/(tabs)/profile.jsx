@@ -78,48 +78,53 @@ const Profile = () => {
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
-          <View className="w-full justify-center items-center mb-10  px-4">
-            <TouchableOpacity
-              className="w-full items-end my-8"
-              onPress={confirmLogout}
-            >
-              <MaterialCommunityIcons
-                name="logout-variant"
-                size={30}
-                color="#FF9C01"
-              />
-            </TouchableOpacity>
-            <View className="w-16 h-16  rounded-lg justify-center items-center">
-              <Image
-                source={{ uri: user?.avatar }}
-                className="w-16 h-16 rounded-full"
-                resizeMode="cover"
-              />
+          <View className="w-full flex mb-10 px-4">
+            <View className="items-end">
+              <TouchableOpacity
+                className="bg-black-100 rounded-full py-1 pl-2 pr-4 items-center my-4 gap-x-2 flex flex-row"
+                onPress={confirmLogout}
+              >
+                <MaterialCommunityIcons
+                  name="logout-variant"
+                  size={30}
+                  color="#FF9C01"
+                />
+                <Text className="text-base text-gray-100">Logout</Text>
+              </TouchableOpacity>
             </View>
-            <InfoBox
-              title={user?.username}
-              containerStyles="mt-5"
-              titleStyles="text-lg"
-            />
-            <View className="mt-5 flex-row">
+            <View className="items-center">
+              <View className="w-16 h-16 rounded-lg flex justify-center items-center">
+                <Image
+                  source={{ uri: user?.avatar }}
+                  className="w-16 h-16 rounded-full"
+                  resizeMode="cover"
+                />
+              </View>
               <InfoBox
-                title={posts.length || 0}
-                subtitle="Posts"
-                containerStyles="mr-10"
-                titleStyles="text-xl"
+                title={user?.username}
+                containerStyles="mt-5"
+                titleStyles="text-lg"
               />
-              <InfoBox
-                title={followersCount}
-                subtitle="Followers"
-                titleStyles="text-xl"
-              />
+              <View className="mt-5 flex-row">
+                <InfoBox
+                  title={posts.length || 0}
+                  subtitle="Posts"
+                  containerStyles="mr-10"
+                  titleStyles="text-xl"
+                />
+                <InfoBox
+                  title={followersCount}
+                  subtitle="Followers"
+                  titleStyles="text-xl"
+                />
+              </View>
             </View>
           </View>
         )}
         ListEmptyComponent={() => (
           <EmptyState
             title="No videos found"
-            subtitle="You have not uploaded any video yet. Let's change that"
+            subtitle="You have not uploaded any video yet. Let's change that!"
           />
         )}
       />

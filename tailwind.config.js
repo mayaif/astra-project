@@ -16,8 +16,10 @@ module.exports = {
         primary: "#161622",
         secondary: {
           DEFAULT: "#FF9C01",
+          50: "#FFD600",
           100: "#FF9001",
           200: "#FF8E01",
+          300: "#FFBD00",
         },
         black: {
           DEFAULT: "#000",

@@ -8,6 +8,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import {
   addLike,
@@ -129,8 +131,8 @@ const VideoCard = ({
 
   const navigateToEditScreen = () => {
     router.push({
-      pathname: "/edit-video", // Replace with the actual path to your edit screen
-      params: { videoId, title, thumbnail, video, prompt: "" }, // Pass necessary data
+      pathname: "/edit-video",
+      params: { videoId, title, thumbnail, video, prompt: "" },
     });
   };
 
@@ -156,7 +158,7 @@ const VideoCard = ({
 
   return (
     !isDeleted && (
-      <View className="flex-col items-center px-4 mb-14">
+      <View className="flex-col items-center px-4 mb-10">
         <View className="flex-row gap-3 items-start">
           <View className="justify-center items-center flex-row flex-1">
             <View className="w-[46px] h-[46px] rounded-full justify-center items-center">
@@ -244,12 +246,13 @@ const VideoCard = ({
             />
           </TouchableOpacity>
         )}
-        <View className="flex flex-row items-center justify-center mt-4 gap-x-4">
+        <View className="flex flex-row items-center justify-center mt-4 gap-x-2">
           {user && user.$id !== creatorId && (
-            <View className="flex flex-row items-center justify-center gap-x-4">
+            <View className="flex flex-row items-center justify-center gap-x-2">
               <TouchableOpacity
                 onPress={handleFollowToggle}
                 activeOpacity={0.7}
+                className="bg-black-100 rounded-full py-1 pl-2 pr-3 items-center gap-x-2 flex flex-row"
               >
                 <SimpleLineIcons
                   name={
@@ -257,25 +260,28 @@ const VideoCard = ({
                       ? "user-following"
                       : "user-follow"
                   }
-                  size={22}
+                  size={18}
                   color="white"
                 />
+                <Text className="text-base text-gray-100">
+                  {followedUsers.has(creatorId) ? "Followed" : "Follow"}
+                </Text>
               </TouchableOpacity>
 
               <View className="flex flex-row items-center justify-center gap-2">
                 <TouchableOpacity
                   onPress={handleSaveToggle}
                   activeOpacity={0.7}
+                  className="bg-black-100 rounded-full py-1 pl-2 pr-3 items-center gap-x-2 flex flex-row"
                 >
-                  <MaterialCommunityIcons
-                    name={
-                      isSaved
-                        ? "content-save-move"
-                        : "content-save-move-outline"
-                    }
-                    size={28}
+                  <FontAwesome
+                    name={isSaved ? "bookmark" : "bookmark-o"}
+                    size={18}
                     color="white"
                   />
+                  <Text className="text-base text-gray-100">
+                    {isSaved ? "Saved" : "Save"}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -284,7 +290,7 @@ const VideoCard = ({
             <TouchableOpacity onPress={handleLikeToggle} activeOpacity={0.7}>
               <AntDesign
                 name={isLiked ? "like1" : "like2"}
-                size={24}
+                size={20}
                 color="white"
               />
             </TouchableOpacity>

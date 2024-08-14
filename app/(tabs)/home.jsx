@@ -40,7 +40,7 @@ const Home = () => {
         renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
-            <View className="justify-between items-start flex-row mb-6">
+            <View className="justify-between items-center flex-row mb-6">
               <View>
                 <Text className="font-pmedium text-base text-gray-100">
                   Welcome back,
@@ -49,10 +49,10 @@ const Home = () => {
                   {user?.username}
                 </Text>
               </View>
-              <View className="mt-1.5">
+              <View className="">
                 <Image
                   source={images.logoSmall}
-                  className="w-9 h-10"
+                  className="w-24 h-24 -mr-6"
                   resizeMode="contain"
                 />
               </View>
