@@ -30,7 +30,7 @@ const SignIn = () => {
       if (result) {
         setUser(result);
         setIsLoggedIn(true);
-        Alert.alert("Success", "User signed in successfully");
+        Alert.alert("Success", "You have signed in successfully");
         router.replace("/home");
       } else {
         Alert.alert("Error", "Failed to fetch user data");
