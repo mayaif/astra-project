@@ -27,17 +27,19 @@ export default function App() {
           />
           <View className="relative mt-5">
             <Text className="text-3xl text-white font-bold text-center">
-              Unlock Limitless Creativity with {""}
+              Share your vision with {""}
               <Text className="text-secondary-200">Astra</Text>
             </Text>
-            <Image
+            {/* <Image
               source={images.path}
-              className="w-[140px] h-[15px] absolute -right-1 top-16"
+              className="w-[140px] h-[15px] absolute left-[25%] top-16"
               resizeMode="contain"
-            />
+            /> */}
             <Text className="text-gray-100 text-sm text-center font-pregular mt-7">
-              Where creativity meets innovation: embark on a journey of
-              limitless exploration with Astra
+              Where your creativity finds a home
+            </Text>
+            <Text className="text-gray-100 text-sm text-center font-pregular ">
+              Start sharing your unique videos with the world
             </Text>
             <CustomButton
               title="Continue with Email"
