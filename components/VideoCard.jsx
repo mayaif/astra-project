@@ -26,6 +26,7 @@ import {
   MenuTrigger,
 } from "react-native-popup-menu";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { router } from "expo-router"; // Import router for navigation
 
 const VideoCard = ({
   video: {
@@ -126,6 +127,13 @@ const VideoCard = ({
     );
   };
 
+  const navigateToEditScreen = () => {
+    router.push({
+      pathname: "/edit-video", // Replace with the actual path to your edit screen
+      params: { videoId, title, thumbnail, video, prompt: "" }, // Pass necessary data
+    });
+  };
+
   const handleLikeToggle = async () => {
     try {
       if (!user || user.$id === creatorId) return;
@@ -184,6 +192,13 @@ const VideoCard = ({
                   />
                 </MenuTrigger>
                 <MenuOptions>
+                  <MenuOption
+                    onSelect={navigateToEditScreen}
+                    className="flex flex-row items-center gap-1 px-3 py-4"
+                  >
+                    <MaterialIcons name="edit" size={24} color="black" />
+                    <Text className="text-base">Edit</Text>
+                  </MenuOption>
                   <MenuOption
                     onSelect={confirmDelete}
                     className="flex flex-row items-center gap-1 px-3 py-4"
