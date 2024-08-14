@@ -74,7 +74,7 @@ const Create = () => {
       <ScrollView className="px-4 my-6">
         <Text className="text-white font-psemibold text-2xl">Upload video</Text>
         <FormField
-          title="Video Title"
+          title="Video title"
           value={form.title}
           placeholder="Give your video a title..."
           handleChangeText={(e) => setForm({ ...form, title: e })}

@@ -33,14 +33,14 @@ const Bookmark = () => {
           <View className="my-8 px-4 space-y-6">
             <View>
               <Text className="text-white font-psemibold text-2xl">
-                Saved Videos
+                Saved videos
               </Text>
             </View>
           </View>
         )}
         ListEmptyComponent={() => (
           <NotFound
-            title="No Saved Videos"
+            title="No saved videos"
             subtitle="You haven't saved any videos. Let's change that!"
           />
         )}
