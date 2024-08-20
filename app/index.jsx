@@ -26,15 +26,10 @@ export default function App() {
             resizeMode="contain"
           />
           <View className="relative mt-5">
-            <Text className="text-3xl text-white font-bold text-center">
+            <Text className="text-2xl text-white font-semibold text-center">
               Share your vision with {""}
-              <Text className="text-secondary-50">Astra</Text>
+              <Text className="text-[#BFF0EA]">Astra</Text>
             </Text>
-            {/* <Image
-              source={images.path}
-              className="w-[140px] h-[15px] absolute left-[29%] top-16"
-              resizeMode="contain"
-            /> */}
             <Text className="text-gray-100 text-sm text-center font-pregular mt-7">
               Where your creativity finds a home
             </Text>

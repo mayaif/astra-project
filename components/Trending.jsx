@@ -33,7 +33,6 @@ const TrendingItem = ({ activeItem, item }) => {
   const [play, setPlay] = useState(false);
   const video = React.useRef(null);
 
-  // console.log(item.video);
   return (
     <Animatable.View
       className="mr-4"

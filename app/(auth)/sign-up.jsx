@@ -42,7 +42,7 @@ const SignUp = () => {
           <Image
             source={images.logo}
             resizeMode="contain"
-            className="w-[115px] h-[35px]"
+            className="w-[40%] h-auto -ml-3"
           />
           <Text className="text-white text-xl text-semibold mt-10 font-psemibold">
             Sign up to Astra

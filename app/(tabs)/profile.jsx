@@ -21,6 +21,7 @@ import InfoBox from "@/components/InfoBox";
 import { signOut } from "../../lib/appwrite";
 import { router } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
@@ -84,11 +85,7 @@ const Profile = () => {
                 className="bg-black-100 rounded-full py-1 pl-2 pr-4 items-center my-4 gap-x-2 flex flex-row"
                 onPress={confirmLogout}
               >
-                <MaterialCommunityIcons
-                  name="logout-variant"
-                  size={30}
-                  color="#FF9C01"
-                />
+                <AntDesign name="logout" size={24} color="#92F5E9" />
                 <Text className="text-base text-gray-100">Logout</Text>
               </TouchableOpacity>
             </View>

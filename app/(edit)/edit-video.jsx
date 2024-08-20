@@ -79,7 +79,7 @@ const EditVideo = () => {
     setUploading(true);
     try {
       await updateVideo(videoId, payload);
-      Alert.alert("Success", "Post updated successfully");
+      Alert.alert("Success", "Video updated successfully");
       router.push("/home");
     } catch (error) {
       Alert.alert("Error", error.message || "Failed to update the video.");

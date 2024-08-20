@@ -1,14 +1,19 @@
 /** @format */
 
-import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { Video, ResizeMode } from "expo-av";
 import { icons } from "@/constants";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import {
@@ -28,7 +33,7 @@ import {
   MenuTrigger,
 } from "react-native-popup-menu";
 import { useGlobalContext } from "@/context/GlobalProvider";
-import { router } from "expo-router"; // Import router for navigation
+import { router } from "expo-router";
 
 const VideoCard = ({
   video: {
@@ -42,6 +47,7 @@ const VideoCard = ({
   const { user, refreshSavedVideos, followedUsers, toggleFollowUser } =
     useGlobalContext();
   const [play, setPlay] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
@@ -155,6 +161,16 @@ const VideoCard = ({
       console.error("Error toggling like state:", error);
     }
   };
+  const handlePlaybackStatusUpdate = (status) => {
+    if (status.isLoaded) {
+      setIsLoading(false);
+      if (status.didJustFinish) {
+        setPlay(false);
+      }
+    } else {
+      setIsLoading(true);
+    }
+  };
 
   return (
     !isDeleted && (
@@ -214,24 +230,32 @@ const VideoCard = ({
           )}
         </View>
         {play ? (
-          <Video
-            source={{
-              uri: video,
-            }}
-            className="w-full h-60 rounded-xl mt-3"
-            resizeMode={ResizeMode.CONTAIN}
-            useNativeControls
-            shouldPlay
-            onPlaybackStatusUpdate={(status) => {
-              if (status.didJustFinish) {
-                setPlay(false);
-              }
-            }}
-          />
+          <View className="w-full h-60 rounded-xl mt-3 relative justify-center items-center">
+            {isLoading && (
+              <ActivityIndicator
+                size="large"
+                color="#ffffff"
+                style={{ position: "absolute", zIndex: 1 }}
+              />
+            )}
+            <Video
+              source={{
+                uri: video,
+              }}
+              className="w-full h-full rounded-xl"
+              resizeMode={ResizeMode.CONTAIN}
+              useNativeControls
+              shouldPlay
+              onPlaybackStatusUpdate={handlePlaybackStatusUpdate} // Use the new status update handler
+            />
+          </View>
         ) : (
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => setPlay(true)}
+            onPress={() => {
+              setIsLoading(true);
+              setPlay(true);
+            }}
             className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
           >
             <Image
