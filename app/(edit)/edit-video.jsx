@@ -149,7 +149,7 @@ const EditVideo = () => {
           </TouchableOpacity>
         </View>
         <FormField
-          title="AI prompt"
+          title="Prompt"
           value={form.prompt}
           placeholder="The prompt you used to create this video"
           handleChangeText={(e) => setForm({ ...form, prompt: e })}

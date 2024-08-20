@@ -39,8 +39,8 @@ const Home = () => {
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
-          <View className="my-6 px-4 space-y-6">
-            <View className="justify-between items-center flex-row mb-6">
+          <View className="my-0 px-4 space-y-4">
+            <View className="justify-between items-center flex-row mb-0">
               <View>
                 <Text className="font-pmedium text-base text-gray-100">
                   Welcome back,
@@ -58,7 +58,7 @@ const Home = () => {
               </View>
             </View>
             <SearchInput />
-            <View className="w-full flex-1 pt-5 pb-8">
+            <View className="w-full flex-1 pt-0 pb-8">
               <Text className="text-lg text-gray-100 font-pregular mb-3">
                 Latest videos
               </Text>

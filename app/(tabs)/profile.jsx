@@ -82,7 +82,7 @@ const Profile = () => {
           <View className="w-full flex mb-10 px-4">
             <View className="items-end">
               <TouchableOpacity
-                className="bg-black-100 rounded-full py-1 pl-2 pr-4 items-center my-4 gap-x-2 flex flex-row"
+                className="bg-black-100 rounded-full py-1 pl-2 pr-4 items-center mt-2 gap-x-2 flex flex-row"
                 onPress={confirmLogout}
               >
                 <AntDesign name="logout" size={24} color="#92F5E9" />
@@ -99,13 +99,13 @@ const Profile = () => {
               </View>
               <InfoBox
                 title={user?.username}
-                containerStyles="mt-5"
+                containerStyles="mt-2"
                 titleStyles="text-lg"
               />
-              <View className="mt-5 flex-row">
+              <View className="mt-2 flex-row">
                 <InfoBox
                   title={posts.length || 0}
-                  subtitle="Posts"
+                  subtitle="Videos"
                   containerStyles="mr-10"
                   titleStyles="text-xl"
                 />

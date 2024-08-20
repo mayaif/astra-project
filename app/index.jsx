@@ -37,7 +37,7 @@ export default function App() {
               Start sharing your unique videos with the world
             </Text>
             <CustomButton
-              title="Continue with Email"
+              title="Continue with email"
               handlePress={() => router.push("/sign-in")}
               containerStyles="mt-7"
             />

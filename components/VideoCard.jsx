@@ -174,7 +174,7 @@ const VideoCard = ({
 
   return (
     !isDeleted && (
-      <View className="flex-col items-center px-4 mb-10">
+      <View className="flex-col items-center px-4 mb-6">
         <View className="flex-row gap-3 items-start">
           <View className="justify-center items-center flex-row flex-1">
             <View className="w-[46px] h-[46px] rounded-full justify-center items-center">
@@ -212,14 +212,14 @@ const VideoCard = ({
                 <MenuOptions>
                   <MenuOption
                     onSelect={navigateToEditScreen}
-                    className="flex flex-row items-center gap-1 px-3 py-4"
+                    className="flex flex-row items-center gap-1 px-3 pt-4"
                   >
                     <MaterialIcons name="edit" size={24} color="black" />
                     <Text className="text-base">Edit</Text>
                   </MenuOption>
                   <MenuOption
                     onSelect={confirmDelete}
-                    className="flex flex-row items-center gap-1 px-3 py-4"
+                    className="flex flex-row items-center gap-1 px-3 pb-4"
                   >
                     <MaterialIcons name="delete" size={24} color="black" />
                     <Text className="text-base">Delete</Text>
@@ -246,7 +246,7 @@ const VideoCard = ({
               resizeMode={ResizeMode.CONTAIN}
               useNativeControls
               shouldPlay
-              onPlaybackStatusUpdate={handlePlaybackStatusUpdate} // Use the new status update handler
+              onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
             />
           </View>
         ) : (
@@ -265,7 +265,7 @@ const VideoCard = ({
             />
             <Image
               source={icons.play}
-              className="w-12 h-12 absolute"
+              className="w-12 h-12 absolute z-50"
               resizeMode="contain"
             />
           </TouchableOpacity>

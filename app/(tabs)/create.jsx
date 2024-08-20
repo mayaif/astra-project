@@ -78,7 +78,7 @@ const Create = () => {
           value={form.title}
           placeholder="Give your video a title..."
           handleChangeText={(e) => setForm({ ...form, title: e })}
-          otherStyles="mt-10"
+          otherStyles="mt-8"
         />
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 font-pmedium">
@@ -93,7 +93,7 @@ const Create = () => {
               />
             ) : (
               <View className="w-full h-40 px-4 bg-black-100 rounded-2xl justify-center items-center">
-                <View className="w-14 h-14 border border-dashed border-secondary-100 justify-center items-center">
+                <View className="w-14 h-14 border border-dashed border-gray-100 justify-center items-center">
                   <Image
                     source={icons.upload}
                     resizeMode="contain"
@@ -130,7 +130,7 @@ const Create = () => {
           </TouchableOpacity>
         </View>
         <FormField
-          title="AI prompt"
+          title="Prompt"
           value={form.prompt}
           placeholder="The prompt you used to create this video"
           handleChangeText={(e) => setForm({ ...form, prompt: e })}
